@@ -10,6 +10,7 @@ import(
 
 func main(){
 	r:=router.Router()
+	
 	fmt.Println("Listening on 4000 ")
 	log.Fatal(http.ListenAndServe(":4000",r))
 }
