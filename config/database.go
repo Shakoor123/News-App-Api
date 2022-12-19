@@ -98,7 +98,7 @@ var DB *sql.DB
 
 func init() {
 	var err error
-	DB, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/test")
+	DB, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/newsApp")
 	checkErr(err)
 
 	//fmt.Println("You connected to your database.")
