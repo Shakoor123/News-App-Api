@@ -5,16 +5,11 @@ import (
 	"net/http"
 	"github.com/shakoor123/config"
 	"github.com/shakoor123/models"
-
+	"github.com/gorilla/mux"
 	"log"
 	"encoding/json"
 
 )
-
-// type user struct {
-// 	Name string `json:"name,omitempty"`
-// 	Age int	`json:"age,omitempty"`
-// }
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request)  {
 	u:=models.User{}
@@ -24,23 +19,11 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request)  {
     if err!=nil{
         log.Fatal("error ",err)
     }else{
-    // defer rows.Close()
-
     for rows.Next() {
-
-		 rows.Scan( &u.Uid, &u.Username,&u.Password,&u.Email)
-
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
+		rows.Scan( &u.Uid, &u.Username,&u.Password,&u.Email)
 		users = append(users, u)
 	}
 	 json.NewEncoder(w).Encode(users)
-
-	// if err := rows.Err(); err != nil {
-	// 	log.Fatal(err)
-	// }
-
 	// fmt.Printf("%#v", users)
 	// w.Header().Set("Content-Type", "application/json")
 	// w.WriteHeader(http.StatusCreated)
@@ -48,17 +31,36 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request)  {
 	// w.Write(response)
 }
 }
-// func InsertUser(w http.ResponseWriter, r *http.Request)  {
-// 	u:=models.User{}
-// 	dec := json.NewDecoder(r.Body)
-// 	dec.Decode(&u);
-// 		_, err := config.DB.Exec(`INSERT INTO test1 (name, age) VALUES (?, ?)`, u.Name, u.Age)
-// 	if err != nil {
-// 		log.Fatal("not inserted",err)
-// 	}else{
-// 		json.NewEncoder(w).Encode("user inserted successfully")
-// 	}
 
 
+func DeleteUser(w http.ResponseWriter,r *http.Request){
+	params:=mux.Vars(r)
+	id:=params["id"]
 
-// }
+	_,err:=config.DB.Query(`DELETE FROM users where uid=?`,id)
+	if err!=nil{
+	json.NewEncoder(w).Encode("{Message:not deleted user}")
+	log.Fatal("error in delete user",err)
+
+
+	}else{
+	json.NewEncoder(w).Encode("{Message:user deleted successfully}")
+	}
+}
+
+func SelectOneUser(w http.ResponseWriter,r *http.Request){
+	params:=mux.Vars(r)
+	id:=params["id"]
+	user:=models.User{}
+	result,err:=config.DB.Query(`SELECT * FROM users where uid=?`,id)
+	if err!=nil{
+	json.NewEncoder(w).Encode("{Message:not deleted user}")
+	log.Fatal("error in delete user",err)
+	}else{
+		defer result.Close()
+		for result.Next() {
+			result.Scan( &user.Uid, &user.Username,&user.Password,&user.Email)
+		}
+	}
+	json.NewEncoder(w).Encode(user)
+}
