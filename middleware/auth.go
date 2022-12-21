@@ -33,6 +33,9 @@ func LoginUser(w http.ResponseWriter,r *http.Request){
 	// }
 	flag:=CheckPasswordHash(u.Password,user.Password)
 	if flag==true{
+		session,_:=Store.Get(r,"session")
+		session.Values["userId"]=user.Uid;
+		session.Save(r,w)
 		json.NewEncoder(w).Encode(user)
 	}else{
 		json.NewEncoder(w).Encode("Password is incurrect")

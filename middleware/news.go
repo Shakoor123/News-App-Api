@@ -11,6 +11,11 @@ import(
 )
 
 func CreateNews(w http.ResponseWriter, r *http.Request){
+	flag:=Auth(w,r)
+	if !flag{
+		json.NewEncoder(w).Encode("not authenticated")
+		return
+	}
 	news:=models.News{}
 	json.NewDecoder(r.Body).Decode(&news)
 	t := time.Now()
@@ -25,6 +30,11 @@ func CreateNews(w http.ResponseWriter, r *http.Request){
 }
 
 func SelectAllNews(w http.ResponseWriter, r *http.Request){
+	flag:=Auth(w,r)
+	if !flag{
+		json.NewEncoder(w).Encode("not authenticated")
+		return
+	}
 	n:= models.News{}
 	news:=[] models.News{}
 	rows,err:=config.DB.Query("SELECT * FROM news")
@@ -40,6 +50,11 @@ func SelectAllNews(w http.ResponseWriter, r *http.Request){
 }
 
 func DeleteNews(w http.ResponseWriter,r *http.Request){
+	flag:=Auth(w,r)
+	if !flag{
+		json.NewEncoder(w).Encode("not authenticated")
+		return
+	}
 	params:=mux.Vars(r)
 	nid:=params["nid"]
 
@@ -55,6 +70,11 @@ func DeleteNews(w http.ResponseWriter,r *http.Request){
 }
 
 func SelectOneNews(w http.ResponseWriter,r *http.Request){
+	flag:=Auth(w,r)
+	if !flag{
+		json.NewEncoder(w).Encode("not authenticated")
+		return
+	}
 	params:=mux.Vars(r)
 	nid:=params["nid"]
 	news:=models.News{}

@@ -12,6 +12,12 @@ import (
 )
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request)  {
+	flag:=Auth(w,r)
+	if !flag{
+		json.NewEncoder(w).Encode("not authenticated")
+		return
+	}
+
 	u:=models.User{}
 	users:=[]models.User{}
 	
@@ -34,6 +40,11 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request)  {
 
 
 func DeleteUser(w http.ResponseWriter,r *http.Request){
+	flag:=Auth(w,r)
+	if !flag{
+		json.NewEncoder(w).Encode("not authenticated")
+		return
+	}
 	params:=mux.Vars(r)
 	id:=params["id"]
 
@@ -49,6 +60,11 @@ func DeleteUser(w http.ResponseWriter,r *http.Request){
 }
 
 func SelectOneUser(w http.ResponseWriter,r *http.Request){
+	flag:=Auth(w,r)
+	if !flag{
+		json.NewEncoder(w).Encode("not authenticated")
+		return
+	}
 	params:=mux.Vars(r)
 	id:=params["id"]
 	user:=models.User{}
